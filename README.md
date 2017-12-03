@@ -24,12 +24,12 @@
     },
 
     mounted: function() {
-      console.log(document.getElementById('user'))
+      console.log('mounted!')
     },
 
     methods: {
       say: function() {
-        alert('I am here')
+        return 'I am here'
       }
     }
   })
