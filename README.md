@@ -5,7 +5,7 @@
 
 > Mipha (ミファー Mifā) is a character in The Legend of Zelda: Breath of the Wild. She is the Princess of the Zora and a major character. Mipha is also the Zora Champion, one of Link's allies, and wears the same blue cloth as Daruk, Urbosa and Revali. This blue cloth is similar to the blue shirts worn by Link and Zelda.  [Zelda Wiki](http://zelda.wikia.com/wiki/Mipha)
 
-![Mipha](https://vignette.wikia.nocookie.net/zelda/images/d/d9/Mipha_Artwork_%28Breath_of_the_Wild%29.png/revision/latest/scale-to-width-down/700?cb=20170306080925)
+![Mipha](http://nos.netease.com/dealer/cfdc6c4841a6ecd505fb1d165fbb78c5ea38b5a07004de28502d95c900968d58.png)
 
 ## Example
 
@@ -43,7 +43,19 @@
   }, 2000)
 ```
 
-## ing
+## Document
+
+### Template Syntax
+
+### props bindings
+
+### Conditional Rendering
+
+### List Rendering
+
+### Event Handling
+
+## developing
 
 
 
