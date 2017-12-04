@@ -21,6 +21,7 @@ export default class Tokenizer {
     this.input = (input || '').trim()
     this.stack = []
     this.tokens = []
+    this.root = false
 
     this.last = function() {
       return this.stack[this.stack.length - 1]
@@ -132,7 +133,7 @@ export default class Tokenizer {
       }
 
       if(last == input) {
-        throw Error('parse error')
+        throw Error('parse template error')
       }
       last = input
     }
@@ -159,7 +160,26 @@ export default class Tokenizer {
 
     unary = closeSelf[tagName] || !!unary
 
-    if(!unary) this.stack.push(tagName)
+    if(!unary) {
+      if(!this.root) {
+        this.stack.push(tagName)
+        this.root = true
+      } else {
+        // all element closed, when new element push , throw error
+        if(!this.stack.length) {
+          throw new Error('template must have only one root element.')
+        }
+      }
+    } else {
+      if(!this.root) {
+        this.root = true
+      } else {
+        // all element closed, when new element push , throw error
+        if(!this.stack.length) {
+          throw new Error('template must have only one root element.')
+        }
+      }
+    }
 
     let attrs = []
     
