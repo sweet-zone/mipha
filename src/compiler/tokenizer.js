@@ -168,6 +168,8 @@ export default class Tokenizer {
         // all element closed, when new element push , throw error
         if(!this.stack.length) {
           throw new Error('template must have only one root element.')
+        } else {
+          this.stack.push(tagName)
         }
       }
     } else {

@@ -2,8 +2,8 @@
 import { LIFECYCLE_HOOKS } from './constants.js'
 import { noop, isFunction } from './util.js'
 import Parser from './compiler/parser.js'
-import h from './compiler/h.js'
-import updateElement from './compiler/patch.js'
+import h from './vnode/h.js'
+import updateElement from './vnode/patch.js'
 
 export default function Mipha(options = {}) {
   let template = (options.template || '').trim()

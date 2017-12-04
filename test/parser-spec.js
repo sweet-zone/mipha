@@ -1,7 +1,7 @@
 
 
 import Parser from '../src/compiler/parser.js'
-import h from '../src/compiler/h.js'
+import h from '../src/vnode/h.js'
 import { expect } from 'chai'
 
 const testObj = {

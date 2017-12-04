@@ -10,6 +10,7 @@ export default class Parser {
 
   parse () {
     let tokens = this.tokens
+    
     let funcBody = ''
     while(this.current < tokens.length) {
       funcBody += this.walk()
@@ -71,7 +72,7 @@ export default class Parser {
 
     if(token.type === 'element') {
       if(typeof token.unary !== 'undefined') {
-        if(!token.unary) { // 标签开始
+        if(!token.unary) { // tag open
 
           let node = {
             type: token.tag,
