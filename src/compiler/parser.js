@@ -26,10 +26,9 @@ export default class Parser {
     if(token.type === 'comment') {
       this.current++
 
-      return {
-        type: token.type,
-        comment: token.comment
-      }
+      token.comment = token.comment || ''
+
+      return `h("!", {}, ["${token.comment}"])`
     }
 
     if(token.type === 'if') {

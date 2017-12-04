@@ -1,7 +1,6 @@
 
 
-export default function updateElement($parent, newNode, oldNode, index) {
-  index = index || 0
+export default function updateElement($parent, newNode, oldNode, index = 0) {
   if(!oldNode) {
     $parent.appendChild(createElement(newNode))
   } else if(!newNode) {
@@ -12,9 +11,9 @@ export default function updateElement($parent, newNode, oldNode, index) {
 
     updateProps($parent.childNodes[index], newNode.props, oldNode.props)
 
-    var newLen = newNode.children.length
-    var oldLen = oldNode.children.length
-    for(var i = 0; i < newLen || i < oldLen; i++) {
+    let newLen = newNode.children.length
+    let oldLen = oldNode.children.length
+    for(let i = 0; i < newLen || i < oldLen; i++) {
       updateElement($parent.childNodes[index], newNode.children[i], oldNode.children[i], i)
     }
   }
@@ -92,7 +91,11 @@ function createElement(node) {
     return document.createTextNode(node+'')
   }
 
-  var $el = document.createElement(node.type)
+  if(node.type === '!') {
+    return document.createComment(node.children[0])
+  }
+
+  let $el = document.createElement(node.type)
   setProps($el, node.props)
 
   node.children
@@ -124,7 +127,7 @@ function updateProp($target, name, newValue, oldValue) {
 
 function updateProps($target, newProps, oldProps) {
   oldProps = oldProps || {}
-  var props = Object.assign({}, newProps, oldProps)
+  let props = Object.assign({}, newProps, oldProps)
   Object.keys(props).forEach(function(name) {
     updateProp($target, name, newProps[name], oldProps[name])
   })
