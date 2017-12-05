@@ -134,7 +134,8 @@ export default class Parser {
         value = `function() { return ${item.value} }`
         obj += '\"' + item.name + '\":' + value + ','
       } else if( isMfProp(item.name) ) {
-
+        value = `(function() { return ${item.value} })()`
+        obj += '\"' + item.name + '\":' + value + ','
       } else {
         obj += '\"' + item.name + '\":\"' + item.value + '\",'
       }
