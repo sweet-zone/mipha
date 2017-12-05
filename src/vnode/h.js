@@ -1,14 +1,15 @@
 
+import { isEmpty } from '../util.js'
 
 export default function h(type, props = {}, children = []) {
   var cr = []
   children.map(function(child) {
     if(Array.isArray(child)) {
       child.map(function(c) {
-        cr.push(c)
+        if( !isEmpty(c) ) cr.push(c)
       })
     } else {
-      cr.push(child)
+      if( !isEmpty(child) ) cr.push(child)
     }
   })
   return {

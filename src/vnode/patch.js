@@ -23,7 +23,7 @@ export default function updateElement($parent, newNode, oldNode, index = 0) {
 // create element by virtual dom
 
 function createElement(node) {
-  
+
   if(typeof node === 'string' || typeof node === 'number') {
     return document.createTextNode(node+'')
   }

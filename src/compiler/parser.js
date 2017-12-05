@@ -1,5 +1,6 @@
 
 import Tokenizer from './tokenizer.js'
+import { isEventProp, isMfProp } from '../vnode/customProp.js'
 
 export default class Parser {
 
@@ -10,14 +11,14 @@ export default class Parser {
 
   parse () {
     let tokens = this.tokens
-    
+
     let funcBody = ''
     while(this.current < tokens.length) {
       funcBody += this.walk()
     }
     // remove , if , on } left
     funcBody = funcBody.replace(/\,[\s]*\}/g, ' }')
-    return new Function('context', 'h', 'with(context) { return ' + funcBody + ' }') 
+    return new Function('context', 'h', 'with(context) { return ' + funcBody + ' }')
   }
 
   walk () {
@@ -29,7 +30,7 @@ export default class Parser {
 
       token.comment = token.comment || ''
 
-      return `h("!", {}, ["${token.comment}"])`
+      return `h(\"!\", {}, [\"${token.comment}\"])`
     }
 
     if(token.type === 'if') {
@@ -76,7 +77,7 @@ export default class Parser {
 
           let node = {
             type: token.tag,
-            props: arr2map(token.attrs),
+            props: this.handleProps(token.attrs),
             children: []
           }
 
@@ -87,8 +88,8 @@ export default class Parser {
             let str = this.walk()
             if(token.type === 'text' && token.text && token.text.trim()) {
               str = ('"' + str.trim() + '"')
-            } 
-            if( (!token.mark && str && str.trim()) || 
+            }
+            if( (!token.mark && str && str.trim()) ||
                 (token.mark && (token.mark === '/if' || token.mark === '/list') ) ) {
               str += ','
             }
@@ -99,7 +100,7 @@ export default class Parser {
             str = str.replace(/return[\s]*\,/g, 'return ')
 
             node.children.push(str)
-            
+
             token = tokens[this.current]
           }
 
@@ -111,28 +112,38 @@ export default class Parser {
 
           this.current++
 
-          return `h("${node.type}", ${node.props}, [${children}])`
-        } 
+          return `h(\"${node.type}\", ${node.props}, [${children}])`
+        }
 
         this.current++
-        return `h("${token.tag}", ${arr2map(token.attrs)}, [])`
+        return `h(\"${token.tag}\", ${this.handleProps(token.attrs)}, [])`
       } else {
         this.current++
         return ''
       }
     }
   }
-  
+
+  handleProps (attrs) {
+    if(!attrs || !attrs.length) return '{}'
+    let obj = '{'
+
+    attrs.map(function(item) {
+      let value
+      if( isEventProp(item.name) ) {
+        value = `function() { return ${item.value} }`
+        obj += '\"' + item.name + '\":' + value + ','
+      } else if( isMfProp(item.name) ) {
+
+      } else {
+        obj += '\"' + item.name + '\":\"' + item.value + '\",'
+      }
+    })
+
+    obj = obj.substring(0, obj.length-1)
+    obj += '}'
+    return obj
+  }
+
 }
 
-
-function arr2map(arr) {
-  if(!arr || !arr.length) return '{}'
-  let obj = '{'
-  arr.map(function(item) {
-    obj += '"' + item.name + '":"' + item.value + '",'
-  })
-  obj = obj.substring(0, obj.length-1)
-  obj += '}'
-  return obj
-}

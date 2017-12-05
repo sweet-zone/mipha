@@ -71,7 +71,7 @@ mo._destroy = function() {
 }
 
 Mipha.extend = function() {
-  
+
 }
 
 
