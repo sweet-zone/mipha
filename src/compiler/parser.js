@@ -55,7 +55,7 @@ export default class Parser {
 
       switch(token.mark) {
         case 'list':
-          return `(function() { return ${token.data}.map(function(_d, _i) { ${token.val} = _d; ${token.index} = _i; return `
+          return `(function() { return ${token.data}.map(function(_d, _i) {var ${token.val} = _d; var ${token.index} = _i; return `
         case '/list':
           return '}) })()'
       }

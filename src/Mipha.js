@@ -11,6 +11,7 @@ export default function Mipha(options = {}) {
   options.methods = options.methods || {}
   this.options = options
   this._render = new Parser(template).parse()
+
   this.oldVNode = null
   this.vnode = null
   this.isMounted = false
