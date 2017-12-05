@@ -2,6 +2,8 @@
 import Tokenizer from './tokenizer.js'
 import { isEventProp, isMfProp } from '../vnode/customProp.js'
 
+const funcParam = /\(.*\)$/
+
 export default class Parser {
 
   constructor(input) {
@@ -131,7 +133,11 @@ export default class Parser {
     attrs.map(function(item) {
       let value
       if( isEventProp(item.name) ) {
-        value = `function() { return ${item.value} }`
+        if(funcParam.test(item.value)) {
+          value = `function($event) { return ${item.value}; }`
+        } else {
+          value = `(function() { return ${item.value}.bind(context); })()`
+        }
         obj += '\"' + item.name + '\":' + value + ','
       } else if( isMfProp(item.name) ) {
         value = `(function() { return ${item.value} })()`
