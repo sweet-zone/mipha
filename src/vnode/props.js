@@ -1,9 +1,10 @@
 
+import { isEmpty } from '../util.js'
 import { setProp, removeProp } from '../dom.js'
 import { isCustomProp, setCustomProp, removeCustomProp } from './customProp.js'
 
 export function updateProps($target, newProps, oldProps = {}) {
-  let props = Object.assign({}, newProps, oldProps)
+  let props = Object.assign({}, oldProps, newProps)
   Object.keys(props).forEach(function(name) {
     updateProp($target, name, newProps[name], oldProps[name])
   })
@@ -16,9 +17,9 @@ export function setProps($target, props) {
 }
 
 function updateProp($target, name, newValue, oldValue) {
-  if(!newValue) {
+  if(isEmpty(newValue)) {
     removePropX($target, name, oldValue)
-  } else if(!oldValue || newValue !== oldValue) {
+  } else if(isEmpty(oldValue) || newValue !== oldValue) {
     // didnt handle event handler change
     if( newValue && oldValue && (typeof newValue === 'function' && typeof oldValue === 'function') )
       return
