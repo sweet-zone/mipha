@@ -3,18 +3,27 @@
 <head>
   <meta charset="UTF-8">
   <title>Document</title>
+  <style type="text/css">
+    .dangerColor { color: red; }
+  </style>
 </head>
 <body>
   <div id="app"></div>
   <script src="../dist/mipha.js"></script>
   <script>
-    
+
     let mipha = new Mipha({
-      template: `<div id="user">{if login}<p>Mipha</p>{/if}<ul>{list items as item}<li>{item}</li>{/list}</ul><p>{say()}</p></div>`,
+      template: `<div id="mipha">
+          <h1>{title}</h1>
+          {if zelda}
+          <p>{hello}</p>
+          {/if}
+        </div>`,
 
       state: {
-        items: [1, 2, 3],
-        login: true
+        title: 'Mipha',
+        zelda: true,
+        hello: 'a simple and simple mvvm library'
       },
 
       created: function() {
@@ -23,22 +32,11 @@
 
       mounted: function() {
         console.log('mounted!')
-      },
-
-      methods: {
-        say: function() {
-          return 'I am here'
-        }
       }
     })
 
     mipha.$mount(document.getElementById('app'))
 
-    setTimeout(function() {
-      mipha.setState({
-        login: false
-      })
-    }, 2000)
   </script>
 </body>
 </html>

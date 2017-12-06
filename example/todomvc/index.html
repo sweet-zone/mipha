@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Mipha - TodoMVC</title>
+  <link rel="stylesheet" href="./css/base.css">
+  <link rel="stylesheet" href="./css/index.css">
+</head>
+<body>
+  <div id="app"></div>
+  <script type="text/mipha" id="tpl">
+    <div>
+      <section class="todoapp">
+        <header class="header">
+          <h1>todos</h1>
+          <input class="new-todo" autofocus autocomplete="off"
+            placeholder="What needs to be done?" on-keyup="addTodo">
+        </header>
+        {if todos.length}
+        <section class="main">
+          <input class="toggle-all" type="checkbox" on-change="switchAllStatus">
+          <ul class="todo-list">
+            {list filteredTodos as todo}
+            <li class="todo" mf-class="{completed: todo.completed, editing: todo == editedTodo}">
+              <div class="view">
+                <input class="toggle" type="checkbox" mf-checked="todo.completed" on-change="switchTodoStatus($event, todo_index)">
+                <label on-dblclick="editTodo(todo)">{todo.title}</label>
+                <button class="destroy" on-click="removeTodo(todo, todo_index)"></button>
+              </div>
+              <input class="edit" type="text" mf-show="todo === editedTodo" mf-value="todo.title"
+                on-blur="doneEdit($event, todo_index)" on-keyup="doneEdit2($event, todo_index)">
+            </li>
+            {/list}
+          </ul>
+        </section>
+        {/if}
+        <footer class="footer" mf-show="todos.length">
+          <span class="todo-count">
+            <strong>{remaining + ' '}</strong> {pluralize('item', remaining)} left
+          </span>
+          <ul class="filters">
+            <li><a on-click="switchVisibility('all')" href="javascript:void(0);"
+              mf-class="{selected: visibility == 'all'}">All</a></li>
+            <li><a on-click="switchVisibility('active')" href="javascript:void(0);" mf-class="{selected: visibility == 'active'}">Active</a></li>
+            <li><a on-click="switchVisibility('completed')" href="javascript:void(0);" mf-class="{selected: visibility == 'completed'}">Completed</a></li>
+          </ul>
+          <button class="clear-completed" on-click="removeCompleted" mf-show="todos.length >= remaining">
+            Clear completed
+          </button>
+        </footer>
+      </section>
+      <footer class="info">
+        <p>Double-click to edit a todo</p>
+        <p>Written by <a href="http://zhaojizong.online">DarkZone</a></p>
+        <p>Hope a Part of<a href="http://todomvc.com">TodoMVC</a></p>
+      </footer>
+    </div>
+
+  </script>
+
+  <script src="../../dist/mipha.js"></script>
+  <script>
+    // todo = { completed: true, title: 'xxx' }
+    var tpl = document.getElementById('tpl')
+    new Mipha({
+      template: tpl.innerHTML,
+
+      state: {
+        todos: [],
+        filteredTodos: [],
+        remaining: 0,
+        editedTodo: {},
+        visibility: 'all'
+      },
+
+      methods: {
+        addTodo: function($event) {
+          var code = $event.which
+          if(code === 13) {
+            var value = $event.target.value
+            if(value && value.trim()) {
+              var todos = this.todos.concat({
+                title: value,
+                completed: false
+              })
+              this.setState({
+                todos: todos,
+                filteredTodos: this.filterTodo(todos),
+                remaining: this.filterRemain(todos)
+              })
+
+              $event.target.value = ''
+            }
+          }
+        },
+        editTodo: function(todo) {
+          this.beforeEditCache = todo.title
+          this.setState({
+            editedTodo: todo
+          })
+        },
+        removeTodo: function(todo, $index) {
+          this.todos.splice($index, 1)
+          this.setState({
+            todos: this.todos,
+            filteredTodos: this.filterTodo(this.todos),
+            remaining: this.filterRemain(this.todos)
+          })
+        },
+        doneEdit: function($event, $index, esc) {
+          var value = $event.target.value
+          if(esc) {
+            this.todos[$index].title = this.beforeEditCache
+            $event.target.value = this.beforeEditCache
+          } else {
+            if(!value || !value.trim()) return
+            this.todos[$index].title = value.trim()
+          }
+
+          this.setState({
+            todos: this.todos,
+            filteredTodos: this.filterTodo(this.todos),
+            remaining: this.filterRemain(this.todos),
+            editedTodo: {}
+          })
+        },
+        doneEdit2: function($event, $index) {
+          var code = $event.which
+          if(code === 13) {
+            this.doneEdit($event, $index)
+          } else if(code === 27) {
+            this.doneEdit($event, $index, true)
+          }
+        },
+        switchTodoStatus: function($event, $index) {
+          var checked = $event.target.checked
+          this.todos[$index].completed = checked
+          this.setState({
+            todos: this.todos,
+            filteredTodos: this.filterTodo(this.todos),
+            remaining: this.filterRemain(this.todos)
+          })
+        },
+        switchAllStatus: function($event) {
+          var checked = $event.target.checked
+          for(var i = 0; i < this.todos.length; i++) {
+            this.todos[i].completed = checked
+          }
+          this.setState({
+            todos: this.todos,
+            filteredTodos: this.filterTodo(this.todos),
+            remaining: this.filterRemain(this.todos)
+          })
+        },
+        removeCompleted: function() {
+          var remainTodos = this.filterTodo(this.todos, 'active')
+          this.setState({
+            todos: remainTodos,
+            filteredTodos: this.filterTodo(remainTodos)
+          })
+        },
+        switchVisibility: function(vis) {
+          this.setState({
+            visibility: vis,
+            filteredTodos: this.filterTodo(this.todos, vis)
+          })
+        },
+        pluralize: function(str, remaining) {
+          return remaining > 1 ? str + 's ' : str + ' '
+        },
+        filterRemain: function(todos) {
+          var remaining = 0
+          todos.forEach(function(todo) {
+            if(!todo.completed) remaining += 1
+          })
+          return remaining
+        },
+        filterTodo: function(todos, vis) {
+          var vis = vis || this.visibility
+          if(vis === 'all') {
+            return todos
+          }
+          return todos.filter(function(todo) {
+            if(vis === 'active') {
+              if(!todo.completed) return true
+              return false
+            } else if(vis === 'completed') {
+              if(!todo.completed) return false
+              return true
+            }
+          })
+        }
+      }
+    }).$mount(document.getElementById('app'))
+  </script>
+</body>
+</html>
