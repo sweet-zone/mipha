@@ -6,7 +6,7 @@
   "scripts": {
     "test": "mocha --compilers js:babel-register --require babel-polyfill test/index.js",
     "dev": "webpack --watch --progress --hide-modules",
-    "dist": "webpack --config webpack/webpack.dist.config.js --progress --hide-modules"
+    "dist": "webpack --config webpack.dist.config.js --progress --hide-modules"
   },
   "repository": {
     "type": "git",
