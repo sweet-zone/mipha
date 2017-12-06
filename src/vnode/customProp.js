@@ -57,9 +57,7 @@ export function setCustomProp($target, name, value) {
     } else if(name === 'model') {
 
     } else {
-      if(typeof value === 'string' || typeof value === 'number') {
-        setProp($target, name, value)
-      }
+      setProp($target, name, value)
     }
 
   }
