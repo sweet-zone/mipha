@@ -10,52 +10,113 @@
 ## Example
 
 ```js
+let mipha = new Mipha({
+  template: `<div id="mipha">
+      <h1>{title}</h1>
+      {if zelda}
+      <p>{hello}</p>
+      {/if}
+    </div>`,
 
-  let mipha = new Mipha({
-    template: `<div id="user">{if login}<p>Mipha</p>{/if}<ul>{list items as item}<li>{item}</li>{/list}</ul><p>{say()}</p></div>`,
+  state: {
+    title: 'Mipha',
+    zelda: true,
+    hello: 'a simple and simple mvvm library'
+  },
 
-    state: {
-      items: [1, 2, 3],
-      login: true
-    },
+  created: function() {
+    console.log('created!')
+  },
 
-    created: function() {
-      console.log('created!')
-    },
+  mounted: function() {
+    console.log('mounted!')
+  }
+})
 
-    mounted: function() {
-      console.log('mounted!')
-    },
-
-    methods: {
-      say: function() {
-        return 'I am here'
-      }
-    }
-  })
-
-  mipha.$mount(document.getElementById('app'))
-
-  setTimeout(function() {
-    mipha.setState({
-      login: false
-    })
-  }, 2000)
+mipha.$mount(document.getElementById('app'))
 ```
 
-## Document
+## How to USE
 
 ### Template Syntax
 
+
+* Text
+
+```html
+<p>{ message }</p>
+```
+
+* Html
+
+```html
+<p mf-html="message"></p>
+```
+
+* Using JavaScript Expressions
+
+```html
+<p>{ x + 1 }</p>
+<p>{ ok ? 'YES' : 'NO' }</p>
+<p>{ message.split('').reverse().join('') }</p>
+```
+
 ### props bindings
+
+```html
+<p mf-id="myId"></p>
+
+<!-- display none or not -->
+<p mf-show="isShow"></p>
+```
 
 ### Conditional Rendering
 
+```html
+{if x === 1}
+<p>1</p>
+{elseif x === 2}
+<p>2</p>
+{else}
+<p>3</p>
+{/if}
+```
+
 ### List Rendering
+
+```html
+<ul>
+  {list items as item}
+  <li><span>{item}</span><span>{item_index}</span></li>
+  {/list}
+</ul>
+```
+
+**use `item_index` for list index**
 
 ### Event Handling
 
-## developing
+```html
+<button on-click="handleClick"></button>
+```
+
+**if you want to handle event object, use `$event`**
+
+```html
+<button on-click="handleClick($event, ':)')"></button>
+```
+
+### setState
+
+```js
+this.setState({
+  todos: newTodos
+})
+```
+
+## Examples
+
+see [examples](https://github.com/zjzhome/mipha/tree/master/example)
 
 
 
