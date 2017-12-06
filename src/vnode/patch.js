@@ -1,11 +1,14 @@
 
 import { updateProps, setProps } from './props.js'
 
+let cachedRemoveNodes = []
+
 export default function updateElement($parent, newNode, oldNode, index = 0) {
   if(!oldNode) {
     $parent.appendChild(createElement(newNode))
   } else if(!newNode) {
-    $parent.removeChild($parent.childNodes[index])
+    cachedRemoveNodes.push($parent.childNodes[index])
+    //$parent.removeChild($parent.childNodes[index])
   } else if(changed(newNode, oldNode)) {
     $parent.replaceChild(createElement(newNode), $parent.childNodes[index])
   } else if(newNode.type) {
@@ -14,8 +17,15 @@ export default function updateElement($parent, newNode, oldNode, index = 0) {
 
     let newLen = newNode.children.length
     let oldLen = oldNode.children.length
+    let $curParent = $parent.childNodes[index]
     for(let i = 0; i < newLen || i < oldLen; i++) {
-      updateElement($parent.childNodes[index], newNode.children[i], oldNode.children[i], i)
+      updateElement($curParent, newNode.children[i], oldNode.children[i], i)
+    }
+    if(cachedRemoveNodes.length) {
+      cachedRemoveNodes.forEach(function(node) {
+        $curParent.removeChild(node)
+      })
+      cachedRemoveNodes = []
     }
   }
 }
