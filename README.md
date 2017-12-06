@@ -118,7 +118,9 @@ this.setState({
 
 see [examples](https://github.com/zjzhome/mipha/tree/master/example)
 
+## License
 
+[MIT](https://opensource.org/licenses/MIT)
 
 
 
