@@ -83,9 +83,13 @@ return /******/ (function(modules) { // webpackBootstrap
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
 exports.isFunction = isFunction;
 exports.isEmpty = isEmpty;
 exports.camelCase = camelCase;
+exports.merge = merge;
 var noop = exports.noop = function noop() {};
 
 function isFunction(f) {
@@ -101,6 +105,24 @@ function camelCase(str) {
   return str.replace(dash, function (all, capture) {
     return capture.toUpperCase();
   });
+}
+
+function merge(o1, o2) {
+  var o = {};
+  for (var k in o1) {
+    o[k] = o1[k];
+  }
+  for (var _k in o2) {
+    if (_typeof(o2[_k]) === 'object') {
+      if (!o[_k]) o[_k] = {};
+      for (var m in o2[_k]) {
+        o[_k][m] = o2[_k][m];
+      }
+    } else {
+      o[_k] = o2[_k];
+    }
+  }
+  return o;
 }
 
 /***/ }),
@@ -287,26 +309,9 @@ var _patch2 = _interopRequireDefault(_patch);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function Mipha() {
-  var _this = this;
-
   var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 
-  var template = (options.template || '').trim();
-  options.state = options.state || {};
-  options.methods = options.methods || {};
-  this.options = options;
-  this._render = new _parser2.default(template).parse();
-
-  this.oldVNode = null;
-  this.vnode = null;
-  this.isMounted = false;
-
-  _constants.LIFECYCLE_HOOKS.map(function (hook) {
-    _this[hook] = options[hook] && (0, _util.isFunction)(options[hook]) ? options[hook] : _util.noop;
-  });
-
-  this._mount2this(options);
-  this._init();
+  this._init(options);
 }
 
 var mo = Mipha.prototype;
@@ -334,7 +339,25 @@ mo.$mount = function ($parent) {
   }
 };
 
-mo._init = function () {
+mo._init = function (options) {
+  var _this = this;
+
+  var template = (options.template || '').trim();
+  options.state = options.state || {};
+  options.methods = options.methods || {};
+  this.options = options;
+  this._render = new _parser2.default(template).parse();
+
+  this.oldVNode = null;
+  this.vnode = null;
+  this.isMounted = false;
+
+  _constants.LIFECYCLE_HOOKS.map(function (hook) {
+    _this[hook] = options[hook] && (0, _util.isFunction)(options[hook]) ? options[hook] : _util.noop;
+  });
+
+  this._mount2this(options);
+
   this.vnode = this._render(this, _h2.default);
   this.created();
 };
@@ -354,7 +377,27 @@ mo._mountState2this = function (options) {
 
 mo._destroy = function () {};
 
-Mipha.extend = function () {};
+Mipha.extend = function () {
+  var exOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+
+  var Super = this;
+
+  var Sub = function MiphaComponent() {
+    var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+
+    options = (0, _util.merge)(Sub.options, options);
+    this._init(options);
+    // const name = exOptions.name || Super.options.name
+  };
+  Sub.prototype = Object.create(Super.prototype);
+  Sub.prototype.constructor = Sub;
+  Sub.options = Object.assign({}, Super.options, exOptions);
+  Sub['super'] = Super;
+
+  Sub.extend = Super.extend;
+
+  return Sub;
+};
 
 /***/ }),
 /* 5 */
@@ -412,6 +455,11 @@ var Parser = function () {
       }
       // remove , if , on } left
       funcBody = funcBody.replace(/\,[\s]*\}/g, ' }');
+
+      if (!funcBody || !funcBody.length) {
+        // if empty template
+        funcBody = 'h("!",{},[""])';
+      }
       return new Function('context', 'h', 'with(context) { return ' + funcBody + ' }');
     }
   }, {
