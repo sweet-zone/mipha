@@ -12,7 +12,7 @@
   <script src="../dist/mipha.js"></script>
   <script>
 
-    let mipha = new Mipha({
+    let MC = Mipha.extend({
       template: `<div id="mipha">
           <h1>{title}</h1>
           {if zelda}
@@ -35,7 +35,11 @@
       }
     })
 
-    mipha.$mount(document.getElementById('app'))
+    new MC({
+      state: {
+        zelda: 'Mipha Princess'
+      }
+    }).$mount(document.getElementById('app'))
 
   </script>
 </body>
