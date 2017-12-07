@@ -20,6 +20,11 @@ export default class Parser {
     }
     // remove , if , on } left
     funcBody = funcBody.replace(/\,[\s]*\}/g, ' }')
+
+    if(!funcBody || !funcBody.length) {
+      // if empty template
+      funcBody = 'h("!",{},[""])'
+    }
     return new Function('context', 'h', 'with(context) { return ' + funcBody + ' }')
   }
 
