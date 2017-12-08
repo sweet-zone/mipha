@@ -58,7 +58,9 @@ function changed(node1, node2) {
     node1.type !== node2.type
 }
 
-
+function isComponentElement(type) {
+  return /^mf-/.test(type)
+}
 
 
 

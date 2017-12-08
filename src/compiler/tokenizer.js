@@ -64,7 +64,7 @@ export default class Tokenizer {
             input = input.substring(match[0].length)
             match[0].replace(startTag, this._handleElementStart.bind(this))
           }
-        } 
+        }
 
       } else if(ch === '{') {
 
@@ -85,18 +85,18 @@ export default class Tokenizer {
           index = input.indexOf('}')
 
           if(index >= 0) {
-            this._handleIfStart(input.substring(7, index), 'elseif') 
+            this._handleIfStart(input.substring(7, index), 'elseif')
             input = input.substring(index + 1)
           }
         } else if(input.indexOf('{else}') === 0) {
-          this._handleIfStart('', 'else') 
+          this._handleIfStart('', 'else')
           input = input.substring(6)
 
         } else if(input.indexOf('{list') === 0) {
           index = input.indexOf('}')
 
           if(index >= 0) {
-            this._handleListStart(input.substring(5, index), 'list') 
+            this._handleListStart(input.substring(5, index), 'list')
             input = input.substring(index + 1)
           }
         } else if(input.indexOf('{/list}') === 0) {
@@ -107,14 +107,14 @@ export default class Tokenizer {
             index = input.indexOf('}')
 
             if(index >= 0) {
-              this._handleExpr(input.substring(1, index)) 
+              this._handleExpr(input.substring(1, index))
               input = input.substring(index + 1)
             }
         }
 
       } else {
 
-        let index1 = input.indexOf('<') 
+        let index1 = input.indexOf('<')
         let index2 = input.indexOf('{')
         if(index1 >= 0 && index2 >= 0) {
             index = (index1 < index2 ? index1 : index2)
@@ -184,7 +184,7 @@ export default class Tokenizer {
     }
 
     let attrs = []
-    
+
     rest.replace(attr, function(match, name) {
       let value = arguments[2] ? arguments[2] :
           arguments[3] ? arguments[3] :
@@ -192,7 +192,7 @@ export default class Tokenizer {
           fillAttrs[name] ? name : ''
 
       if(name === 'class') name = 'className'
-      
+
       attrs.push({
         name: name,
         value: value

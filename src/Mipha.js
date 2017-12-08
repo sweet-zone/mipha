@@ -31,6 +31,10 @@ mo.$mount = function($parent) {
     this.mounted()
     this.isMounted = true
     this.$parent = $parent
+
+    // Object.keys(this.components).forEach((name) => {
+    //   this.components[name].isMounted = true
+    // })
   }
 }
 
@@ -44,6 +48,7 @@ mo._init = function(options) {
   this.oldVNode = null
   this.vnode = null
   this.isMounted = false
+  this.components = {}
 
   LIFECYCLE_HOOKS.map((hook) => {
     this[hook] = ( options[hook] && isFunction(options[hook]) ) ? options[hook] : noop
@@ -52,6 +57,9 @@ mo._init = function(options) {
   this._mount2this(options)
 
   this.vnode = this._render(this, h)
+
+  this._insertVNodeFromComponents()
+
   this.created()
 }
 
@@ -68,6 +76,32 @@ mo._mountState2this = function(options) {
   }
 }
 
+mo._insertVNodeFromComponents = function() {
+  let components = this.options.components
+
+  if(typeof components === 'object' && Object.keys(components).length) {
+    const names = Object.keys(components)
+    if(this.vnode.children && this.vnode.children.length) {
+      this.vnode.children = replaceVNodeChild(this.vnode.children, components, names, this)
+    }
+  }
+
+  function replaceVNodeChild(children, components, names, self) {
+    return children.map(function(child) {
+      let i = names.indexOf(child.type)
+      if(i === -1) return child
+
+      let component = new components[ names[i] ]()
+      self.components[ names[i] ] = component
+      return component.vnode
+
+      if(child.children && child.children.length) {
+        return replaceVNodeChild(child.chilren, components)
+      }
+    })
+  }
+}
+
 mo._destroy = function() {
 
 }
@@ -78,7 +112,6 @@ Mipha.extend = function(exOptions = {}) {
   const Sub = function MiphaComponent(options = {}) {
     options = merge(Sub.options, options)
     this._init(options)
-    // const name = exOptions.name || Super.options.name
   }
   Sub.prototype = Object.create(Super.prototype)
   Sub.prototype.constructor = Sub
