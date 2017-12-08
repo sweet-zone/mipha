@@ -12,13 +12,37 @@
   <script src="../dist/mipha.js"></script>
   <script>
 
+    let Story = Mipha.extend({
+      template: `<div class="story">
+        <p>{text}</p>
+        <button on-click="changeText">changeText</button>
+      </div>`,
+
+      state: {
+        text: 'mipha\'s story'
+      },
+
+      methods: {
+        changeText: function() {
+          this.setState({
+            text: 'mipha and link story'
+          })
+        }
+      }
+    })
+
     let MC = Mipha.extend({
       template: `<div id="mipha">
           <h1>{title}</h1>
           {if zelda}
           <p>{hello}</p>
           {/if}
+          <mf-story />
         </div>`,
+
+      components: {
+        'mf-story': Story
+      },
 
       state: {
         title: 'Mipha',
