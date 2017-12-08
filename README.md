@@ -114,6 +114,10 @@ this.setState({
 })
 ```
 
+### simple component support
+
+see [base example](/example)
+
 ## TodoMVC Example
 
 see [TodoMVC](http://zhaojizong.online/posts/mipha/todomvc/index.html)
