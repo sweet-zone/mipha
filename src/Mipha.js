@@ -15,9 +15,22 @@ mo.setState = function(state) {
   this.options.state = Object.assign({}, this.options.state, state)
   this._mountState2this(this.options)
 
+  // 判断是不是有外层组件，如果有外层组件，则修改外层组件的 vnode，
+  // 判断外层组件是否 isMount 确定外层是否 $mount
+  // 若无，则按之前逻辑
   this.vnode = this._render(this, h)
-  if(this.isMounted) {
-    this.$mount(this.$parent)
+
+  if(this.outers && this.outers.length) {
+    this.outers.forEach(function(outer) {
+      outer._insertVNodeFromComponents()
+      if(outer.isMounted) {
+        outer.$mount(outer.$parent)
+      }
+    })
+  } else {
+    if(this.isMounted) {
+      this.$mount(this.$parent)
+    }
   }
 }
 
@@ -31,10 +44,6 @@ mo.$mount = function($parent) {
     this.mounted()
     this.isMounted = true
     this.$parent = $parent
-
-    // Object.keys(this.components).forEach((name) => {
-    //   this.components[name].isMounted = true
-    // })
   }
 }
 
@@ -48,7 +57,8 @@ mo._init = function(options) {
   this.oldVNode = null
   this.vnode = null
   this.isMounted = false
-  this.components = {}
+  this.components = {}  // includes components
+  this.outers = []      // outer components
 
   LIFECYCLE_HOOKS.map((hook) => {
     this[hook] = ( options[hook] && isFunction(options[hook]) ) ? options[hook] : noop
@@ -81,8 +91,10 @@ mo._insertVNodeFromComponents = function() {
 
   if(typeof components === 'object' && Object.keys(components).length) {
     const names = Object.keys(components)
-    if(this.vnode.children && this.vnode.children.length) {
-      this.vnode.children = replaceVNodeChild(this.vnode.children, components, names, this)
+    this.originalVNode = this._render(this, h)
+    if(this.originalVNode.children && this.originalVNode.children.length) {
+      this.originalVNode.children = replaceVNodeChild(this.originalVNode.children, components, names, this)
+      this.vnode = this.originalVNode
     }
   }
 
@@ -91,8 +103,17 @@ mo._insertVNodeFromComponents = function() {
       let i = names.indexOf(child.type)
       if(i === -1) return child
 
-      let component = new components[ names[i] ]()
-      self.components[ names[i] ] = component
+      let component = self.components[ names[i] ]
+      if(!component) {
+        component = new components[ names[i] ]()
+        self.components[ names[i] ] = component
+
+        // push outers
+        if(component.outers.indexOf(self) === -1) {
+          component.outers.push(self)
+        }
+      }
+
       return component.vnode
 
       if(child.children && child.children.length) {
