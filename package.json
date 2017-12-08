@@ -4,7 +4,9 @@
   "description": "a simple and tiny mvvm library for building web ui",
   "main": "src/index.js",
   "scripts": {
-    "test": "mocha --compilers js:babel-register --require babel-polyfill test/index.js",
+    "spec": "mocha --compilers js:babel-register --require babel-polyfill test/index.js",
+    "browser": "phantomjs ./node_modules/mocha-phantomjs-core/mocha-phantomjs-core.js test/index.html",
+    "test": "npm run spec && npm run browser",
     "dev": "webpack --watch --progress --hide-modules",
     "dist": "webpack --config webpack.dist.config.js --progress --hide-modules"
   },
@@ -20,16 +22,16 @@
   },
   "homepage": "https://github.com/zjzhome/mipha#readme",
   "devDependencies": {
-    "chai": "^4.1.2",
-    "cz-conventional-changelog": "^2.1.0",
-    "mocha": "^4.0.1"
-  },
-  "dependencies": {
     "babel-core": "^6.26.0",
     "babel-loader": "^7.1.2",
     "babel-polyfill": "^6.26.0",
     "babel-preset-es2015": "^6.24.1",
     "babel-register": "^6.26.0",
+    "chai": "^4.1.2",
+    "cz-conventional-changelog": "^2.1.0",
+    "mocha": "^4.0.1",
+    "mocha-phantomjs-core": "^2.1.2",
+    "phantomjs": "^2.1.7",
     "webpack": "^3.9.1"
   },
   "config": {
