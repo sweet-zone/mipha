@@ -106,7 +106,7 @@ mipha.$mount(document.getElementById('app'))
 <button on-click="handleClick($event, ':)')"></button>
 ```
 
-### setState
+### Data Bind
 
 ```js
 this.setState({
@@ -114,7 +114,7 @@ this.setState({
 })
 ```
 
-### simple component support
+### Component support
 
 see [base example](/example)
 
