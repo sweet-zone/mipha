@@ -288,6 +288,9 @@ exports.default = _Mipha2.default;
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
 exports.default = Mipha;
 
 var _constants = __webpack_require__(5);
@@ -320,9 +323,22 @@ mo.setState = function (state) {
   this.options.state = Object.assign({}, this.options.state, state);
   this._mountState2this(this.options);
 
+  // 判断是不是有外层组件，如果有外层组件，则修改外层组件的 vnode，
+  // 判断外层组件是否 isMount 确定外层是否 $mount
+  // 若无，则按之前逻辑
   this.vnode = this._render(this, _h2.default);
-  if (this.isMounted) {
-    this.$mount(this.$parent);
+
+  if (this.outers && this.outers.length) {
+    this.outers.forEach(function (outer) {
+      outer._insertVNodeFromComponents();
+      if (outer.isMounted) {
+        outer.$mount(outer.$parent);
+      }
+    });
+  } else {
+    if (this.isMounted) {
+      this.$mount(this.$parent);
+    }
   }
 };
 
@@ -351,6 +367,8 @@ mo._init = function (options) {
   this.oldVNode = null;
   this.vnode = null;
   this.isMounted = false;
+  this.components = {}; // includes components
+  this.outers = []; // outer components
 
   _constants.LIFECYCLE_HOOKS.map(function (hook) {
     _this[hook] = options[hook] && (0, _util.isFunction)(options[hook]) ? options[hook] : _util.noop;
@@ -359,6 +377,9 @@ mo._init = function (options) {
   this._mount2this(options);
 
   this.vnode = this._render(this, _h2.default);
+
+  this._insertVNodeFromComponents();
+
   this.created();
 };
 
@@ -375,6 +396,43 @@ mo._mountState2this = function (options) {
   }
 };
 
+mo._insertVNodeFromComponents = function () {
+  var components = this.options.components;
+
+  if ((typeof components === 'undefined' ? 'undefined' : _typeof(components)) === 'object' && Object.keys(components).length) {
+    var names = Object.keys(components);
+    this.originalVNode = this._render(this, _h2.default);
+    if (this.originalVNode.children && this.originalVNode.children.length) {
+      this.originalVNode.children = replaceVNodeChild(this.originalVNode.children, components, names, this);
+      this.vnode = this.originalVNode;
+    }
+  }
+
+  function replaceVNodeChild(children, components, names, self) {
+    return children.map(function (child) {
+      var i = names.indexOf(child.type);
+      if (i === -1) return child;
+
+      var component = self.components[names[i]];
+      if (!component) {
+        component = new components[names[i]]();
+        self.components[names[i]] = component;
+
+        // push outers
+        if (component.outers.indexOf(self) === -1) {
+          component.outers.push(self);
+        }
+      }
+
+      return component.vnode;
+
+      if (child.children && child.children.length) {
+        return replaceVNodeChild(child.chilren, components);
+      }
+    });
+  }
+};
+
 mo._destroy = function () {};
 
 Mipha.extend = function () {
@@ -387,7 +445,6 @@ Mipha.extend = function () {
 
     options = (0, _util.merge)(Sub.options, options);
     this._init(options);
-    // const name = exOptions.name || Super.options.name
   };
   Sub.prototype = Object.create(Super.prototype);
   Sub.prototype.constructor = Sub;
@@ -1039,6 +1096,11 @@ function createElement(node) {
 
 function changed(node1, node2) {
   return (typeof node1 === 'undefined' ? 'undefined' : _typeof(node1)) !== (typeof node2 === 'undefined' ? 'undefined' : _typeof(node2)) || typeof node1 === 'string' && node1 !== node2 || node1.type !== node2.type;
+}
+
+function isComponentElement(type) {
+  return (/^mf-/.test(type)
+  );
 }
 
 /***/ }),
