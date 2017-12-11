@@ -228,6 +228,8 @@ exports.removeBooleanProp = removeBooleanProp;
 function setProp($target, name, value) {
   if (name === 'className') {
     $target.setAttribute('class', value);
+  } else if (name === 'htmlFor') {
+    $target.setAttribute('for', value);
   } else if (typeof value === 'boolean') {
     setBooleanProp($target, name, value);
   } else {
@@ -238,6 +240,8 @@ function setProp($target, name, value) {
 function removeProp($target, name, value) {
   if (name === 'className') {
     $target.removeAttribute('class');
+  } else if (name === 'htmlFor') {
+    $target.removeAttribute('for', value);
   } else if (typeof value === 'boolean') {
     removeBooleanProp($target, name);
   } else {
@@ -860,6 +864,7 @@ var Tokenizer = function () {
         var value = arguments[2] ? arguments[2] : arguments[3] ? arguments[3] : arguments[4] ? arguments[4] : fillAttrs[name] ? name : '';
 
         if (name === 'class') name = 'className';
+        if (name === 'for') name = 'htmlFor';
 
         attrs.push({
           name: name,
