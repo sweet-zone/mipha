@@ -5,7 +5,8 @@
   "main": "src/index.js",
   "scripts": {
     "spec": "mocha --compilers js:babel-register --require babel-polyfill test/index.js",
-    "browser": "phantomjs ./node_modules/mocha-phantomjs-core/mocha-phantomjs-core.js test/index.html",
+    "browser-build": "webpack --config webpack.spec.config.js --progress --hide-modules",
+    "browser": "npm run browser-build && phantomjs ./node_modules/mocha-phantomjs-core/mocha-phantomjs-core.js test/index.html",
     "test": "npm run spec && npm run browser",
     "dev": "webpack --watch --progress --hide-modules",
     "dist": "webpack --config webpack.dist.config.js --progress --hide-modules"
