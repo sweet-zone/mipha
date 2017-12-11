@@ -192,6 +192,7 @@ export default class Tokenizer {
           fillAttrs[name] ? name : ''
 
       if(name === 'class') name = 'className'
+      if(name === 'for') name = 'htmlFor'
 
       attrs.push({
         name: name,

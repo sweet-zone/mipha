@@ -3,6 +3,8 @@
 export function setProp($target, name, value) {
   if(name === 'className') {
     $target.setAttribute('class', value)
+  } else if(name === 'htmlFor') {
+    $target.setAttribute('for', value)
   } else if(typeof value === 'boolean') {
     setBooleanProp($target, name, value)
   } else {
@@ -13,6 +15,8 @@ export function setProp($target, name, value) {
 export function removeProp($target, name, value) {
   if(name === 'className') {
     $target.removeAttribute('class')
+  } else if(name === 'htmlFor') {
+    $target.removeAttribute('for', value)
   } else if(typeof value === 'boolean') {
     removeBooleanProp($target, name)
   } else {
