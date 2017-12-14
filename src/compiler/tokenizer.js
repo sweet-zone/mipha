@@ -104,12 +104,12 @@ export default class Tokenizer {
           input = input.substring(7)
 
         } else if(input.indexOf('{') === 0) {
-            index = input.indexOf('}')
+          index = input.indexOf('}')
 
-            if(index >= 0) {
-              this._handleExpr(input.substring(1, index))
-              input = input.substring(index + 1)
-            }
+          if(index >= 0) {
+            this._handleExpr(input.substring(1, index))
+            input = input.substring(index + 1)
+          }
         }
 
       } else {
@@ -117,13 +117,13 @@ export default class Tokenizer {
         let index1 = input.indexOf('<')
         let index2 = input.indexOf('{')
         if(index1 >= 0 && index2 >= 0) {
-            index = (index1 < index2 ? index1 : index2)
+          index = (index1 < index2 ? index1 : index2)
         } else if(index1 === -1 && !index2 === -1 ) {
-            index = -1
+          index = -1
         } else if(index1 >= 0) {
-            index = index1
+          index = index1
         } else if(index2 >= 0) {
-            index = index2
+          index = index2
         }
         let text = index < 0 ? input : input.substring(0, index)
         input = index < 0 ? '' : input.substring(index)
@@ -186,11 +186,13 @@ export default class Tokenizer {
     let attrs = []
 
     rest.replace(attr, function(match, name) {
+      /* eslint-disable */
       let value = arguments[2] ? arguments[2] :
-          arguments[3] ? arguments[3] :
-          arguments[4] ? arguments[4] :
-          fillAttrs[name] ? name : ''
+        arguments[3] ? arguments[3] :
+        arguments[4] ? arguments[4] :
+        fillAttrs[name] ? name : ''
 
+      /* eslint-enable */
       if(name === 'class') name = 'className'
       if(name === 'for') name = 'htmlFor'
 
@@ -305,13 +307,5 @@ function makeMap(str){
   let obj = {}, items = str.split(',')
   for ( let i = 0; i < items.length; i++ )
     obj[ items[i] ] = true
-  return obj
-}
-
-function arr2map(arr) {
-  let obj = {}
-  arr.map(function(item) {
-    obj[item.name] = item.value
-  })
   return obj
 }

@@ -19,7 +19,7 @@ export default class Parser {
       funcBody += this.walk()
     }
     // remove , if , on } left
-    funcBody = funcBody.replace(/\,[\s]*\}/g, ' }')
+    funcBody = funcBody.replace(/,[\s]*\}/g, ' }')
 
     if(!funcBody || !funcBody.length) {
       // if empty template
@@ -37,7 +37,7 @@ export default class Parser {
 
       token.comment = token.comment || ''
 
-      return `h(\"!\", {}, [\"${token.comment}\"])`
+      return `h("!", {}, ["${token.comment}"])`
     }
 
     if(token.type === 'if') {
@@ -104,7 +104,7 @@ export default class Parser {
               str = str.trim()
             }
 
-            str = str.replace(/return[\s]*\,/g, 'return ')
+            str = str.replace(/return[\s]*,/g, 'return ')
 
             node.children.push(str)
 
@@ -119,11 +119,11 @@ export default class Parser {
 
           this.current++
 
-          return `h(\"${node.type}\", ${node.props}, [${children}])`
+          return `h("${node.type}", ${node.props}, [${children}])`
         }
 
         this.current++
-        return `h(\"${token.tag}\", ${this.handleProps(token.attrs)}, [])`
+        return `h("${token.tag}", ${this.handleProps(token.attrs)}, [])`
       } else {
         this.current++
         return ''
@@ -143,12 +143,12 @@ export default class Parser {
         } else {
           value = `(function() { return ${item.value}.bind(context); })()`
         }
-        obj += '\"' + item.name + '\":' + value + ','
+        obj += '"' + item.name + '":' + value + ','
       } else if( isMfProp(item.name) ) {
         value = `(function() { return ${item.value} })()`
-        obj += '\"' + item.name + '\":' + value + ','
+        obj += '"' + item.name + '":' + value + ','
       } else {
-        obj += '\"' + item.name + '\":\"' + item.value + '\",'
+        obj += '"' + item.name + '":"' + item.value + '",'
       }
     })
 

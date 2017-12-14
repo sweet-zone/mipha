@@ -8,7 +8,7 @@
 // mf-html
 
 import { camelCase } from '../util.js'
-import { setProp, removeProp } from '../dom.js'
+import { setProp } from '../dom.js'
 
 export function isCustomProp(name) {
   return isEventProp(name) || isMfProp(name)
@@ -55,7 +55,7 @@ export function setCustomProp($target, name, value) {
     } else if(name === 'html') {
       $target.innerHTML = value
     } else if(name === 'model') {
-
+      // @todo
     } else {
       setProp($target, name, value)
     }

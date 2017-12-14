@@ -9,7 +9,8 @@
     "browser": "npm run browser-build && phantomjs ./node_modules/mocha-phantomjs-core/mocha-phantomjs-core.js test/index.html",
     "test": "npm run spec && npm run browser",
     "dev": "webpack --watch --progress --hide-modules",
-    "dist": "webpack --config webpack.dist.config.js --progress --hide-modules"
+    "dist": "webpack --config webpack.dist.config.js --progress --hide-modules",
+    "lint": "eslint ./src"
   },
   "repository": {
     "type": "git",
@@ -30,6 +31,9 @@
     "babel-register": "^6.26.0",
     "chai": "^4.1.2",
     "cz-conventional-changelog": "^2.1.0",
+    "eslint": "^4.13.1",
+    "eslint-config-airbnb-base": "^12.1.0",
+    "eslint-plugin-import": "^2.8.0",
     "mocha": "^4.0.1",
     "mocha-phantomjs-core": "^2.1.2",
     "phantomjs": "^2.1.7",

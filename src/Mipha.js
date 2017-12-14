@@ -114,11 +114,11 @@ mo._insertVNodeFromComponents = function() {
         }
       }
 
-      return component.vnode
-
       if(child.children && child.children.length) {
-        return replaceVNodeChild(child.chilren, components)
+        return replaceVNodeChild(child.chilren, components, names, self)
       }
+
+      return component.vnode
     })
   }
 }
