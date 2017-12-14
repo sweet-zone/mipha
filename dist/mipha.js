@@ -199,7 +199,9 @@ function setCustomProp($target, name, value) {
       }
     } else if (name === 'html') {
       $target.innerHTML = value;
-    } else if (name === 'model') {} else {
+    } else if (name === 'model') {
+      // @todo
+    } else {
       (0, _dom.setProp)($target, name, value);
     }
   }
@@ -428,11 +430,11 @@ mo._insertVNodeFromComponents = function () {
         }
       }
 
-      return component.vnode;
-
       if (child.children && child.children.length) {
-        return replaceVNodeChild(child.chilren, components);
+        return replaceVNodeChild(child.chilren, components, names, self);
       }
+
+      return component.vnode;
     });
   }
 };
@@ -515,7 +517,7 @@ var Parser = function () {
         funcBody += this.walk();
       }
       // remove , if , on } left
-      funcBody = funcBody.replace(/\,[\s]*\}/g, ' }');
+      funcBody = funcBody.replace(/,[\s]*\}/g, ' }');
 
       if (!funcBody || !funcBody.length) {
         // if empty template
@@ -601,7 +603,7 @@ var Parser = function () {
                 str = str.trim();
               }
 
-              str = str.replace(/return[\s]*\,/g, 'return ');
+              str = str.replace(/return[\s]*,/g, 'return ');
 
               node.children.push(str);
 
@@ -641,12 +643,12 @@ var Parser = function () {
           } else {
             value = '(function() { return ' + item.value + '.bind(context); })()';
           }
-          obj += '\"' + item.name + '\":' + value + ',';
+          obj += '"' + item.name + '":' + value + ',';
         } else if ((0, _customProp.isMfProp)(item.name)) {
           value = '(function() { return ' + item.value + ' })()';
-          obj += '\"' + item.name + '\":' + value + ',';
+          obj += '"' + item.name + '":' + value + ',';
         } else {
-          obj += '\"' + item.name + '\":\"' + item.value + '\",';
+          obj += '"' + item.name + '":"' + item.value + '",';
         }
       });
 
@@ -861,8 +863,10 @@ var Tokenizer = function () {
       var attrs = [];
 
       rest.replace(attr, function (match, name) {
+        /* eslint-disable */
         var value = arguments[2] ? arguments[2] : arguments[3] ? arguments[3] : arguments[4] ? arguments[4] : fillAttrs[name] ? name : '';
 
+        /* eslint-enable */
         if (name === 'class') name = 'className';
         if (name === 'for') name = 'htmlFor';
 
@@ -989,14 +993,6 @@ function makeMap(str) {
   }return obj;
 }
 
-function arr2map(arr) {
-  var obj = {};
-  arr.map(function (item) {
-    obj[item.name] = item.value;
-  });
-  return obj;
-}
-
 /***/ }),
 /* 8 */
 /***/ (function(module, exports, __webpack_require__) {
@@ -1101,11 +1097,6 @@ function createElement(node) {
 
 function changed(node1, node2) {
   return (typeof node1 === 'undefined' ? 'undefined' : _typeof(node1)) !== (typeof node2 === 'undefined' ? 'undefined' : _typeof(node2)) || typeof node1 === 'string' && node1 !== node2 || node1.type !== node2.type;
-}
-
-function isComponentElement(type) {
-  return (/^mf-/.test(type)
-  );
 }
 
 /***/ }),
