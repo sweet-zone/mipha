@@ -36,10 +36,24 @@ let mipha = new Mipha({
 mipha.$mount(document.getElementById('app'))
 ```
 
-## How to USE
+
+## Download
+
+### npm
+
+```bash
+$ npm install mipha --save
+```
+
+
+### Direct download
+
+* [mipha.js](https://raw.githubusercontent.com/zjzhome/mipha/master/dist/mipha.js)
+* [mipha.min.js](https://raw.githubusercontent.com/zjzhome/mipha/master/dist/mipha.min.js)
+
+## Let's Start!
 
 ### Template Syntax
-
 
 * Text
 
@@ -131,6 +145,8 @@ see [TodoMVC](http://zhaojizong.online/posts/mipha/todomvc/index.html)
 ## License
 
 [MIT](https://opensource.org/licenses/MIT)
+
+## DEVELOPING
 
 
 
