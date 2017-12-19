@@ -1,4 +1,5 @@
 
+import { convertEntity } from '../util.js'
 import { updateProps, setProps } from './props.js'
 
 let cachedRemoveNodes = []
@@ -35,7 +36,10 @@ export default function updateElement($parent, newNode, oldNode, index = 0) {
 function createElement(node) {
 
   if(typeof node === 'string' || typeof node === 'number') {
-    return document.createTextNode(node+'')
+
+    node = convertEntity(node)
+
+    return document.createTextNode(node)
   }
 
   if(node.type === '!') {
