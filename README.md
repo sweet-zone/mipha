@@ -118,6 +118,12 @@ this.setState({
 
 see [base example](/example)
 
+### restrict
+
+* only one root node
+* {if} only support one root node too...
+* Mipha will remove all white space in template...
+
 ## TodoMVC Example
 
 see [TodoMVC](http://zhaojizong.online/posts/mipha/todomvc/index.html)
